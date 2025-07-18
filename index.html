@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mileage Tracker Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <style>
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        .hero-section {
+            background-color: #2F4062;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const App = () => {
+            const handleComingSoon = () => {
+                alert('Coming soon!');
+            };
+
+            const features = [
+                { title: 'Live GPS Tracking', description: 'Track your trips in real-time with precision.' },
+                { title: 'Route-Based Distance', description: 'Accurate mileage using Google Maps APIs.' },
+                { title: 'Trip Entry', description: 'Manual and automatic trip logging.' },
+                { title: 'Trip Categorization', description: 'Easily classify trips as business or personal.' },
+                { title: 'Fuel & Reimbursement', description: 'Calculate fuel costs and reimbursements.' },
+                { title: 'Statistics', description: 'In-depth trip summaries and statistics.' },
+                { title: 'CSV Export', description: 'Export your trip data for reporting.' },
+                { title: 'Map View', description: 'Visualize routes with polylines and markers.' },
+                { title: 'Reverse Geocoding', description: 'Automatic address lookup from coordinates.' },
+                { title: 'Secure Auth', description: 'Secure user authentication with Supabase.' },
+                { title: 'Custom Settings', description: 'Personalize user and vehicle settings.' },
+                { title: 'Cross-Platform', description: 'Available on both iOS and Android.' }
+            ];
+
+            return (
+                <div className="min-h-screen bg-gray-100">
+                    {/* Hero Section */}
+                    <header className="hero-section text-white text-center py-20 px-4">
+                        <div className="max-w-4xl mx-auto">
+                            <img src="icon.png" alt="App Icon" className="mx-auto mb-4 h-24 w-24 rounded-full"/>
+                            <h1 className="text-5xl font-bold mb-4">Mileage Tracker Pro</h1>
+                            <p className="text-xl mb-4">
+                                The ultimate solution for tracking trips, calculating mileage, and managing driving-related expenses with ease.
+                            </p>
+                            <div className="flex items-center justify-center text-lg text-blue-200 mb-8">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                  <path d="M13 7H7v6h6V7z" />
+                                  <path fillRule="evenodd" d="M7 2a1 1 0 011-1h4a1 1 0 011 1v1h1.5a1.5 1.5 0 011.5 1.5v1.5a1.5 1.5 0 01-1.5 1.5H16v4h-1.5a1.5 1.5 0 01-1.5 1.5V16h-4v1.5a1.5 1.5 0 01-1.5 1.5H6a1 1 0 01-1-1v-1H3.5a1.5 1.5 0 01-1.5-1.5v-1.5A1.5 1.5 0 013.5 11H4V7H3.5a1.5 1.5 0 01-1.5-1.5V4A1.5 1.5 0 013.5 2.5H4V2a1 1 0 011-1h2zm-1 2H6v1.5a1.5 1.5 0 01-1.5 1.5H3v4h1.5A1.5 1.5 0 016 12.5V14h8v-1.5a1.5 1.5 0 011.5-1.5H17V6h-1.5A1.5 1.5 0 0114 4.5V3H8v1z" clipRule="evenodd" />
+                                </svg>
+                                <span>Powered by AI</span>
+                            </div>
+                            <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                                <a href="#" onClick={handleComingSoon} className="inline-block">
+                                    <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" className="h-14"/>
+                                </a>
+                                <a href="#" onClick={handleComingSoon} className="inline-block">
+                                    <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" className="h-20"/>
+                                </a>
+                                <button onClick={handleComingSoon} className="h-14 px-6 text-white font-bold rounded-lg shadow-lg flex items-center transition duration-300" style={{backgroundColor: '#e57138'}}>
+                                    Web Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Features Section */}
+                    <main className="py-20 px-4">
+                        <div className="max-w-6xl mx-auto">
+                            <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Features</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {features.map((feature, index) => (
+                                    <div key={index} className="glassmorphism p-6 text-center">
+                                        <h3 className="text-2xl font-semibold mb-2 text-gray-900">{feature.title}</h3>
+                                        <p className="text-gray-700">{feature.description}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="bg-gray-800 text-white text-center py-8">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="flex justify-center space-x-6">
+                                <a href="privacy_policy.html" className="hover:underline">Privacy Policy</a>
+                                <a href="terms_of_service.html" className="hover:underline">Terms of Service</a>
+                            </div>
+                            <p className="mt-4 text-gray-400">&copy; 2024 <a href="https://uniqubit.ca" target="_blank" rel="noopener noreferrer" className="hover:underline">uniQubit</a>. All rights reserved.</p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html> 
