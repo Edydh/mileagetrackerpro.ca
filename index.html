@@ -21,9 +21,33 @@
         .hero-section {
             background-color: #2F4062;
         }
+        html { scroll-behavior: smooth; }
+        :root {
+            --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+            --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Scroll-reveal utility */
+        .reveal {
+            opacity: 0;
+            transform: translateY(12px);
+            will-change: transform, opacity;
+            transition: transform 600ms var(--ease-out-quint), opacity 700ms var(--ease-out-quint);
+        }
+        .reveal.is-visible { opacity: 1; transform: translateY(0); }
+        /* Micro-interactions */
+        .tilt-hover {
+            transition: transform 300ms var(--ease-in-out), box-shadow 300ms var(--ease-in-out), background-color 300ms var(--ease-in-out);
+        }
+        .tilt-hover:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 30px rgba(0,0,0,0.12); }
+        .cta-press { transition: transform 200ms var(--ease-out-quint), filter 200ms var(--ease-out-quint), box-shadow 200ms var(--ease-out-quint); }
+        .cta-press:hover { transform: translateY(-1px) scale(1.02); filter: brightness(1.05); }
+        .cta-press:active { transform: translateY(0) scale(0.98); filter: brightness(0.98); }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
+    <div id="loading" class="fixed inset-0 flex items-center justify-center bg-white bg-opacity-90 z-50">
+        <div class="animate-spin h-12 w-12 rounded-full border-4 border-gray-300 border-t-blue-500"></div>
+    </div>
     <div id="root"></div>
 
     <script type="text/babel">
@@ -47,50 +71,258 @@
                 { title: 'Cross-Platform', description: 'Available on both iOS and Android.' }
             ];
 
+            // Optional: add logo objects like { src: 'logo-x.png', alt: 'Company X' }
+            const partnerLogos = [];
+            const trustIndicators = [
+                { title: 'Data encrypted in transit', subtitle: 'Your sync and analytics are protected.' },
+                { title: 'Data deletion on request', subtitle: 'You control and can delete your data.' },
+                { title: 'Cross‑platform', subtitle: 'Works on iOS and Android.' },
+                { title: 'Export‑ready', subtitle: 'CSV and PDF reports for tax season.' }
+            ];
+
+            const steps = [
+                { title: 'Drive & Track', description: 'Start a trip with one tap. Mileage is calculated automatically.' },
+                { title: 'Scan Receipts', description: 'AI extracts vendor, date, and amount from a quick photo.' },
+                { title: 'Export & Save', description: 'Generate tax-ready reports and reclaim your deductions.' }
+            ];
+
+            const plans = [
+                { name: 'Starter', price: 'Free', period: '', highlight: false, features: ['Manual trip logging', 'Basic analytics', 'CSV export (limited)'] },
+                { name: 'Pro', price: '$4.99', period: '/month', highlight: true, features: ['Automatic GPS tracking', 'AI receipt scanning', 'Unlimited exports', 'Priority support'] },
+                { name: 'Business', price: '$9.99', period: '/month', highlight: false, features: ['Team reports', 'Shared destinations', 'Advanced filters'] }
+            ];
+
+            const testimonials = [
+                { name: 'Taylor R.', role: 'Consultant', quote: 'Cut my bookkeeping time in half. The AI receipts are a lifesaver.' },
+                { name: 'Sam K.', role: 'Real Estate Agent', quote: 'Mileage accuracy is spot on. Expense reports are ready in minutes.' },
+                { name: 'Priya D.', role: 'Freelancer', quote: 'Clean UX, powerful features. Exactly what I needed for tax season.' }
+            ];
+
+            const faqs = [
+                { q: 'Do you store my data securely?', a: 'Yes. Data is encrypted in transit and securely stored. You can also request deletion at any time.' },
+                { q: 'Can I export my trips and expenses?', a: 'Absolutely. Export to CSV or PDF summaries for your accountant or records.' },
+                { q: 'Does it work on both iOS and Android?', a: 'Yes. The app supports both platforms, and your data syncs across devices.' },
+                { q: 'What is included in Premium?', a: 'Unlimited AI receipt scanning, advanced analytics, priority support, and extended history.' }
+            ];
+
+            const [openFaqIndex, setOpenFaqIndex] = React.useState(null);
+            const toggleFaq = (idx) => {
+                setOpenFaqIndex((current) => (current === idx ? null : idx));
+            };
+
+            // Mount effects: remove loader and set up scroll-reveal
+            React.useEffect(() => {
+                const loader = document.getElementById('loading');
+                if (loader && loader.parentNode) {
+                    loader.parentNode.removeChild(loader);
+                }
+
+                const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                const revealElements = document.querySelectorAll('[data-reveal]');
+                if (prefersReducedMotion) {
+                    revealElements.forEach((el) => el.classList.add('is-visible'));
+                    return;
+                }
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.2, rootMargin: '0px 0px -60px 0px' });
+                revealElements.forEach((el) => observer.observe(el));
+            }, []);
+
             return (
                 <div className="min-h-screen bg-gray-100">
-                    {/* Hero Section */}
-                    <header className="hero-section text-white text-center py-20 px-4">
-                        <div className="max-w-4xl mx-auto">
-                            <img src="icon.png" alt="App Icon" className="mx-auto mb-4 h-24 w-24 rounded-full"/>
-                            <h1 className="text-5xl font-bold mb-4">Mileage Tracker Pro</h1>
-                            <p className="text-xl mb-4">
-                                The ultimate solution for tracking trips, calculating mileage, and managing driving-related expenses with ease.
-                            </p>
-                            <div className="flex items-center justify-center text-lg text-blue-200 mb-8">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                  <path d="M13 7H7v6h6V7z" />
-                                  <path fillRule="evenodd" d="M7 2a1 1 0 011-1h4a1 1 0 011 1v1h1.5a1.5 1.5 0 011.5 1.5v1.5a1.5 1.5 0 01-1.5 1.5H16v4h-1.5a1.5 1.5 0 01-1.5 1.5V16h-4v1.5a1.5 1.5 0 01-1.5 1.5H6a1 1 0 01-1-1v-1H3.5a1.5 1.5 0 01-1.5-1.5v-1.5A1.5 1.5 0 013.5 11H4V7H3.5a1.5 1.5 0 01-1.5-1.5V4A1.5 1.5 0 013.5 2.5H4V2a1 1 0 011-1h2zm-1 2H6v1.5a1.5 1.5 0 01-1.5 1.5H3v4h1.5A1.5 1.5 0 016 12.5V14h8v-1.5a1.5 1.5 0 011.5-1.5H17V6h-1.5A1.5 1.5 0 0114 4.5V3H8v1z" clipRule="evenodd" />
-                                </svg>
-                                <span>Powered by AI</span>
+                    {/* Navbar */}
+                    <nav className="sticky top-0 z-40">
+                        <div className="mx-auto max-w-6xl px-4">
+                            <div className="mt-4 mb-2 glassmorphism px-4 py-3 flex items-center justify-between text-gray-900">
+                                <div className="flex items-center">
+                                    <img src="icon.png" alt="Logo" className="h-8 w-8 rounded"/>
+                                    <span className="ml-2 font-semibold">Mileage Tracker Pro</span>
+                                </div>
+                                <div className="hidden md:flex items-center space-x-6">
+                                    <a href="#benefits" className="hover:text-blue-600">Benefits</a>
+                                    <a href="#how-it-works" className="hover:text-blue-600">How it works</a>
+                                    <a href="#pricing" className="hover:text-blue-600">Pricing</a>
+                                    <a href="#testimonials" className="hover:text-blue-600">Testimonials</a>
+                                    <a href="#faq" className="hover:text-blue-600">FAQ</a>
+                                    <a href="#cta" className="ml-2 px-4 py-2 rounded-lg text-white cta-press" style={{backgroundColor: '#2F4062'}}>Get the App</a>
+                                </div>
                             </div>
-                            <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
-                                <a href="#" onClick={handleComingSoon} className="inline-block">
-                                    <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" className="h-14"/>
-                                </a>
-                                <a href="https://play.google.com/store/apps/details?id=com.edydhm.mileagetrackerpro&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="inline-block">
-                                    <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" className="h-20"/>
-                                </a>
-                                <button onClick={handleComingSoon} className="h-14 px-6 text-white font-bold rounded-lg shadow-lg flex items-center transition duration-300" style={{backgroundColor: '#e57138'}}>
-                                    Web Dashboard
-                                </button>
+                        </div>
+                    </nav>
+                    {/* Hero Section */}
+                    <header className="hero-section text-white py-20 px-4">
+                        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center reveal" data-reveal>
+                            <div>
+                                <img src="icon.png" alt="App Icon" className="mb-4 h-16 w-16 rounded-full"/>
+                                <h1 className="text-4xl md:text-5xl font-bold mb-4">Track mileage. Scan receipts. Maximize deductions.</h1>
+                                <p className="text-xl mb-6">Your AI-powered assistant for effortless trip logging and expense management.</p>
+                                <div className="flex items-center text-lg text-blue-200 mb-6">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                      <path d="M13 7H7v6h6V7z" />
+                                      <path fillRule="evenodd" d="M7 2a1 1 0 011-1h4a1 1 0 011 1v1h1.5a1.5 1.5 0 011.5 1.5v1.5a1.5 1.5 0 01-1.5 1.5H16v4h-1.5a1.5 1.5 0 01-1.5 1.5V16h-4v1.5a1.5 1.5 0 01-1.5 1.5H6a1 1 0 01-1-1v-1H3.5a1.5 1.5 0 01-1.5-1.5v-1.5A1.5 1.5 0 013.5 11H4V7H3.5a1.5 1.5 0 01-1.5-1.5V4A1.5 1.5 0 013.5 2.5H4V2a1 1 0 011-1h2zm-1 2H6v1.5a1.5 1.5 0 01-1.5 1.5H3v4h1.5A1.5 1.5 0 016 12.5V14h8v-1.5a1.5 1.5 0 011.5-1.5H17V6h-1.5A1.5 1.5 0 0114 4.5V3H8v1z" clipRule="evenodd" />
+                                    </svg>
+                                    <span>Powered by AI</span>
+                                </div>
+                                <div className="flex flex-col sm:flex-row items-center sm:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                                    <a href="#" onClick={handleComingSoon} className="inline-block transform cta-press focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-60 rounded">
+                                        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" className="h-14"/>
+                                    </a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.edydhm.mileagetrackerpro&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="inline-block transform cta-press focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-60 rounded">
+                                        <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" className="h-20"/>
+                                    </a>
+                                    <button onClick={handleComingSoon} className="h-14 px-6 text-white font-bold rounded-lg shadow-lg flex items-center transition duration-300 transform cta-press focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-300" style={{backgroundColor: '#e57138'}}>
+                                        Web Dashboard
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="hidden md:block">
+                                <div className="glassmorphism h-72 rounded-xl flex items-center justify-center text-white text-opacity-90">
+                                    <span className="px-6 text-center">Product preview area. Drop a screenshot here.</span>
+                                </div>
                             </div>
                         </div>
                     </header>
 
-                    {/* Features Section */}
-                    <main className="py-20 px-4">
-                        <div className="max-w-6xl mx-auto">
-                            <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Features</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <main className="py-16 px-4">
+                        {/* Partners */}
+                        <section id="partners" className="max-w-6xl mx-auto mb-16 reveal" data-reveal>
+                            <p className="text-center text-gray-500 mb-4">Trusted by professionals and teams</p>
+                            {partnerLogos.length > 0 ? (
+                                <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8">
+                                    {partnerLogos.map((logo, i) => (
+                                        <img key={i} src={logo.src} alt={logo.alt} className="h-8 w-auto opacity-80"/>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6">
+                                    {trustIndicators.map((ti, i) => (
+                                        <div key={i} className="glassmorphism p-4 text-center">
+                                            <p className="text-sm font-semibold text-gray-900">{ti.title}</p>
+                                            <p className="text-xs text-gray-600 mt-1">{ti.subtitle}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+
+                        {/* Benefits (Bento-style) */}
+                        <section id="benefits" className="max-w-6xl mx-auto mb-16">
+                            <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Benefits</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                                 {features.map((feature, index) => (
-                                    <div key={index} className="glassmorphism p-6 text-center">
+                                    <div
+                                        key={index}
+                                        className={`glassmorphism p-6 text-left reveal tilt-hover ${index === 0 ? 'sm:col-span-2 lg:col-span-2' : ''}`}
+                                        data-reveal
+                                    >
                                         <h3 className="text-2xl font-semibold mb-2 text-gray-900">{feature.title}</h3>
                                         <p className="text-gray-700">{feature.description}</p>
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                        </section>
+
+                        {/* How it works */}
+                        <section id="how-it-works" className="max-w-6xl mx-auto mb-16 reveal" data-reveal>
+                            <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">How it works</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {steps.map((step, idx) => (
+                                    <div key={idx} className="glassmorphism p-6 text-left tilt-hover">
+                                        <div className="flex items-center mb-3">
+                                            <div className="h-8 w-8 rounded-full flex items-center justify-center text-white mr-3" style={{backgroundColor: '#2F4062'}}>{idx + 1}</div>
+                                            <h3 className="text-xl font-semibold text-gray-900">{step.title}</h3>
+                                        </div>
+                                        <p className="text-gray-700">{step.description}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* Pricing */}
+                        <section id="pricing" className="max-w-6xl mx-auto mb-16 reveal" data-reveal>
+                            <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Pricing</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {plans.map((plan, idx) => (
+                                    <div key={idx} className={`p-6 rounded-xl border ${plan.highlight ? 'border-blue-600 ring-2 ring-blue-100' : 'border-gray-200'} bg-white tilt-hover`}>
+                                        <h3 className="text-2xl font-semibold mb-2 text-gray-900">{plan.name}</h3>
+                                        <div className="flex items-end mb-4">
+                                            <span className="text-3xl font-bold text-gray-900">{plan.price}</span>
+                                            <span className="ml-1 text-gray-500">{plan.period}</span>
+                                        </div>
+                                        <ul className="space-y-2 mb-4 text-gray-700">
+                                            {plan.features.map((f, i) => (
+                                                <li key={i} className="flex items-start"><span className="text-green-600 mr-2">✓</span><span>{f}</span></li>
+                                            ))}
+                                        </ul>
+                                        <button className={`w-full py-2 rounded-lg font-semibold cta-press ${plan.highlight ? 'text-white' : 'text-white'}`} style={{backgroundColor: plan.highlight ? '#2F4062' : '#e57138'}}>Choose {plan.name}</button>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* Loved worldwide + Testimonials */}
+                        <section id="testimonials" className="max-w-6xl mx-auto mb-16 reveal" data-reveal>
+                            <h2 className="text-4xl font-bold text-center mb-8 text-gray-900">Loved by people worldwide</h2>
+                            <div className="flex items-center justify-center gap-3 mb-8">
+                                {Array.from({ length: 8 }).map((_, i) => (
+                                    <div key={i} className="h-3 w-3 bg-blue-200 rounded-full" aria-hidden="true"></div>
+                                ))}
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {testimonials.map((t, i) => (
+                                    <div key={i} className="glassmorphism p-6 tilt-hover">
+                                        <div className="flex items-center mb-3">
+                                            <div className="h-10 w-10 rounded-full bg-gray-300 mr-3" aria-hidden="true"></div>
+                                            <div>
+                                                <p className="font-semibold text-gray-900">{t.name}</p>
+                                                <p className="text-gray-600 text-sm">{t.role}</p>
+                                            </div>
+                                        </div>
+                                        <p className="text-gray-800">“{t.quote}”</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* FAQ */}
+                        <section id="faq" className="max-w-6xl mx-auto mb-16 reveal" data-reveal>
+                            <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Frequently Asked Questions</h2>
+                            <div className="space-y-3">
+                                {faqs.map((item, idx) => (
+                                    <div key={idx} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                                        <button onClick={() => toggleFaq(idx)} className="w-full flex items-center justify-between text-left px-4 py-3 focus:outline-none">
+                                            <span className="font-medium text-gray-900">{item.q}</span>
+                                            <span className="text-gray-500">{openFaqIndex === idx ? '−' : '+'}</span>
+                                        </button>
+                                        {openFaqIndex === idx && (
+                                            <div className="px-4 pb-4 text-gray-700">{item.a}</div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* Bottom CTA */}
+                        <section id="cta" className="max-w-6xl mx-auto mb-4 reveal" data-reveal>
+                            <div className="glassmorphism p-8 md:p-10 text-center">
+                                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Ready to transform your mileage tracking?</h3>
+                                <p className="text-gray-700 mb-6">Join thousands of professionals who save time and money every month.</p>
+                                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                    <a href="https://play.google.com/store/apps/details?id=com.edydhm.mileagetrackerpro&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="inline-block transform cta-press">
+                                        <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" className="h-16"/>
+                                    </a>
+                                    <a href="#" onClick={handleComingSoon} className="inline-block transform cta-press">
+                                        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" className="h-12"/>
+                                    </a>
+                                </div>
+                            </div>
+                        </section>
                     </main>
 
                     {/* Footer */}
@@ -112,10 +344,15 @@
     </script>
     <script>
         window.va = window.va || function () { (window.va.q = window.va.q || []).push(arguments); };
-        const script = document.createElement('script');
-        script.src = '/_vercel/insights/script.js';
-        script.defer = true;
-        document.head.appendChild(script);
+        (function() {
+            var isProdHost = location.protocol === 'https:' || /mileagetrackerpro\.ca$/.test(location.hostname) || /vercel\.app$/.test(location.hostname);
+            if (!isProdHost) return; // Avoid loading when opened from file:// or localhost
+            var script = document.createElement('script');
+            script.src = '/_vercel/insights/script.js';
+            script.defer = true;
+            document.head.appendChild(script);
+        })();
     </script>
+    
 </body>
 </html> 
