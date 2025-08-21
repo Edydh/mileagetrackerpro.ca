@@ -36,13 +36,15 @@ export default function BottomCTA() {
               loading="lazy"
             />
           </a>
-          <button
-            onClick={handleSoon}
-            className="h-12 px-6 text-white font-semibold rounded-lg shadow hover:opacity-95"
+          <a
+            href="https://web.mileagetrackerpro.ca/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="h-12 px-6 text-white font-semibold rounded-lg shadow hover:opacity-95 flex items-center justify-center"
             style={{ backgroundColor: '#e57138' }}
           >
             Web Dashboard
-          </button>
+          </a>
         </div>
       </div>
     </section>
